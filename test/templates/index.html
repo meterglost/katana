@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body, form {
+            width: 500px; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box;
+        }
+        label:has(input) {
+            width: 100%; display: flex; flex-direction: column;
+        }
+        form {
+            border: 2px red solid;
+            padding: 2px;
+        }
+    </style>
+</head>
+<body>
+    <input form="testForm" type="text" name="inputOutsideLabelOutsideForm">
+    <label>
+        <input form="testForm" type="text" name="inputInsideLabelOutsideForm">
+    </label>
+
+    <form id="testForm" action="/" method="post">
+        <label>
+            <input type="text" name="inputInsideLabelInsideForm" placeholder="Input inside label inside form">
+        </label>
+        <input type="text" name="inputOutsideLabelInsideForm">
+
+        <fieldset>
+            <legend>Test checkbox</legend>
+            <div>
+                <input type="checkbox" name="checkbox" value="1"/>
+                <label for="checkbox">1</label>
+            </div>
+            <div>
+                <input type="checkbox" name="checkbox" value="2"/>
+                <label for="checkbox">2</label>
+            </div>
+        </fieldset>
+        
+        <input type="color" name="color">
+        <input type="date" name="date">
+        <input type="email" name="email">
+        <input type="hidden" name="hidden" value="hidden">
+        <input type="number" name="number">
+        <input type="password" name="password">
+        <input type="range" name="range">
+        <input type="search" name="search">
+        <input type="radio" name="radio" value="3">
+        <input type="radio" name="radio" value="2">
+        <input type="radio" name="radio" value="1">
+        <input type="tel" name="tel">
+        <input type="url" name="url">
+
+        <select name="selectInsideForm">
+            <option value="">--Test select tag--</option>
+            <option value="dog">Dog</option>
+            <option value="cat">Cat</option>
+        </select>
+
+        <textarea name="textareaInsideForm" rows="5" cols="33">...</textarea>
+
+        <button type="submit" name="submit" value="testForm">Submit</button>
+    </form>
+    
+    <textarea form="testForm" name="textareaOutsideForm" rows="5" cols="33">...</textarea>
+
+    <select form="testForm" name="selectOutsideForm">
+        <option value="">--Test select tag--</option>
+        <option value="parrot">Parrot</option>
+        <option value="spider">Spider</option>
+    </select>
+
+</body>
+</html>

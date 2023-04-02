@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  web:
+    build: ./test/
+    volumes:
+      - ./test/:/var/www/html/:ro
+    working_dir: /var/www/html/
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    ports:
+      - 8080:5000
+    command: flask --app app run --with-threads --host=0.0.0.0 --debug
+
+  app:
+    image: golang:alpine
+    volumes:
+      - ./:/katana/:ro
+    working_dir: /katana/cmd/katana/
+    command: go run main.go -u http://web:5000 -aff -duc -v
+    depends_on:
+      - web
