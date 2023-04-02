@@ -538,15 +538,23 @@ func bodyFormTagParser(resp navigation.Response) (navigationRequests []navigatio
 		}
 
 		// Get the form field suggestions for all inputs
-		formInputs := []utils.FormInput{}
-		item.Find("input").Each(func(index int, item *goquery.Selection) {
-			if len(item.Nodes) == 0 {
-				return
-			}
-			formInputs = append(formInputs, utils.ConvertGoquerySelectionToFormInput(item))
-		})
+		formParams := []utils.FormParam{}
 
-		dataMap := utils.FormInputFillSuggestions(formInputs)
+		formSubmittableElements := strings.Join([]string{"input", "button", "select", "textarea"}, ",")
+
+		// Form elements include element inside and outside form
+		formElement := item.Find(formSubmittableElements)
+		if formID, formHasID := item.Attr("id"); formHasID {
+			formElement = formElement.Union(resp.Reader.Find("[form=" + formID + "]").Filter(formSubmittableElements))
+		}
+
+		formElement.Filter(formSubmittableElements).Filter("[name]:not([name=''])").Each(
+			func(index int, item *goquery.Selection) {
+				formParams = append(formParams, utils.ConvertGoquerySelectionToFormParam(item))
+			},
+		)
+
+		dataMap := utils.FormParamFillSuggestions(formParams)
 		for key, value := range dataMap {
 			if key == "" || value == "" {
 				continue

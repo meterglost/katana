@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var htmlFormInputExample = `<html>
+var htmlFormParamExample = `<html>
 <head>
 	<title>HTML Form Test</title>
 </head>
@@ -38,22 +38,22 @@ var htmlFormInputExample = `<html>
 </body>
 </html>`
 
-func TestFormInputFillSuggestions(t *testing.T) {
-	document, err := goquery.NewDocumentFromReader(strings.NewReader(htmlFormInputExample))
+func TestFormParamFillSuggestions(t *testing.T) {
+	document, err := goquery.NewDocumentFromReader(strings.NewReader(htmlFormParamExample))
 	require.NoError(t, err, "could not read document")
 
 	document.Find("form[action]").Each(func(i int, item *goquery.Selection) {
 		queryValuesWriter := make(url.Values)
-		formInputs := []FormInput{}
+		formParams := []FormParam{}
 
 		item.Find("input").Each(func(index int, item *goquery.Selection) {
 			if len(item.Nodes) == 0 {
 				return
 			}
-			formInputs = append(formInputs, ConvertGoquerySelectionToFormInput(item))
+			formParams = append(formParams, ConvertGoquerySelectionToFormParam(item))
 		})
 
-		dataMap := FormInputFillSuggestions(formInputs)
+		dataMap := FormParamFillSuggestions(formParams)
 		for key, value := range dataMap {
 			if key == "" || value == "" {
 				continue

@@ -32,17 +32,17 @@ var DefaultFormFillData = FormFillData{
 	Placeholder: "katana",
 }
 
-// FormInput is an input for a form field
-type FormInput struct {
+// FormParam is an input for a form field
+type FormParam struct {
 	Type       string
 	Name       string
 	Value      string
 	Attributes map[string]string
 }
 
-// FormInputFillSuggestions returns a list of form filling suggestions
+// FormParamFillSuggestions returns a list of form filling suggestions
 // for inputs returning the specified recommended values.
-func FormInputFillSuggestions(inputs []FormInput) map[string]string {
+func FormParamFillSuggestions(inputs []FormParam) map[string]string {
 	data := make(map[string]string)
 
 	// Fill checkboxes and radioboxes first or default values first
@@ -105,22 +105,30 @@ func FormInputFillSuggestions(inputs []FormInput) map[string]string {
 	return data
 }
 
-// ConvertGoquerySelectionToFormInput converts goquery selection to form input
-func ConvertGoquerySelectionToFormInput(item *goquery.Selection) FormInput {
-	attrs := item.Nodes[0].Attr
-	input := FormInput{Attributes: make(map[string]string)}
+// ConvertGoquerySelectionToFormParam converts goquery selection to form input
+func ConvertGoquerySelectionToFormParam(item *goquery.Selection) FormParam {
+	param := FormParam{Attributes: make(map[string]string)}
 
-	for _, attribute := range attrs {
-		switch attribute.Key {
-		case "name":
-			input.Name = attribute.Val
-		case "value":
-			input.Value = attribute.Val
-		case "type":
-			input.Type = attribute.Val
-		default:
-			input.Attributes[attribute.Key] = attribute.Val
+	param.Name, _ = item.Attr("name")
+
+	if item.Is("input") || item.Is("button") {
+		param.Type = item.AttrOr("type", "")
+		if item.AttrOr("type", "") == "checkbox" {
+			param.Value = item.AttrOr("value", "on")
+		} else {
+			param.Value = item.AttrOr("value", "")
 		}
+	} else if item.Is("select") {
+		param.Type = "radio"
+		param.Value = item.Children().Last().AttrOr("value", "")
+	} else if item.Is("texarea") {
+		param.Type = "text"
+		param.Value = item.Text()
 	}
-	return input
+
+	for _, attribute := range item.Nodes[0].Attr {
+		param.Attributes[attribute.Key] = attribute.Val
+	}
+
+	return param
 }
